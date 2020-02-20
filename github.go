@@ -13,6 +13,8 @@ import (
 
 //go:generate counterfeiter -o fakes/fake_git_hub.go . GitHub
 
+const timeout = 15 * time.Second
+
 type GitHub interface {
 	ListDeployments() ([]*github.Deployment, error)
 	ListDeploymentStatuses(ID int64) ([]*github.DeploymentStatus, error)
@@ -52,7 +54,7 @@ func NewGitHubClient(source Source) (*GitHubClient, error) {
 
 func (g *GitHubClient) ListDeployments() ([]*github.Deployment, error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	deployments, res, err := g.client.Repositories.ListDeployments(ctx, g.user, g.repository, nil)
@@ -70,7 +72,7 @@ func (g *GitHubClient) ListDeployments() ([]*github.Deployment, error) {
 
 func (g *GitHubClient) GetDeployment(ID int64) (*github.Deployment, error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	deployment, res, err := g.client.Repositories.GetDeployment(ctx, g.user, g.repository, ID)
@@ -88,7 +90,7 @@ func (g *GitHubClient) GetDeployment(ID int64) (*github.Deployment, error) {
 
 func (g *GitHubClient) CreateDeployment(request *github.DeploymentRequest) (*github.Deployment, error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	deployment, res, err := g.client.Repositories.CreateDeployment(ctx, g.user, g.repository, request)
@@ -106,7 +108,7 @@ func (g *GitHubClient) CreateDeployment(request *github.DeploymentRequest) (*git
 
 func (g *GitHubClient) ListDeploymentStatuses(ID int64) ([]*github.DeploymentStatus, error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	statuses, res, err := g.client.Repositories.ListDeploymentStatuses(ctx, g.user, g.repository, ID, nil)
@@ -124,7 +126,7 @@ func (g *GitHubClient) ListDeploymentStatuses(ID int64) ([]*github.DeploymentSta
 
 func (g *GitHubClient) CreateDeploymentStatus(ID int64, request *github.DeploymentStatusRequest) (*github.DeploymentStatus, error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	status, res, err := g.client.Repositories.CreateDeploymentStatus(ctx, g.user, g.repository, ID, request)
